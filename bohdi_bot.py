@@ -61,7 +61,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user.name}')
+    print(f'Logged in as {bot.user.name} new message test')
 
 @bot.command(name='bohdi')
 async def bohdi_command(ctx):
