@@ -23,22 +23,17 @@ def bag_of_words(s, words):
     return numpy.array(bag)
 
 
-def chat(model, words, data):
-    print("Start talking with the bot (type quit to stop)!")
-    while True:
-        inp = input("You: ")
-        if inp.lower() == "quit":
-            break
+def bohdigpt_response(content, model, words, labels, data):
 
-        results = model.predict([bag_of_words(inp, words)])
-        results_index = numpy.argmax(results)
-        tag = labels[results_index]
+    results = model.predict([bag_of_words(content, words)])
+    results_index = numpy.argmax(results)
+    tag = labels[results_index]
 
-        for tg in data["intents"]:
-            if tg['tag'] == tag:
-                responses = tg['responses']
+    for tg in data["intents"]:
+        if tg['tag'] == tag:
+            responses = tg['responses']
 
-        print(random.choice(responses))
+    return random.choice(responses)
 
 def get_model(training, output):
     net = tflearn.input_data(shape=[None, len(training[0])])
@@ -48,28 +43,21 @@ def get_model(training, output):
     net = tflearn.regression(net)
 
     model = tflearn.DNN(net)
-    model.load("model.tflearn")
+    model.load("BohdiGPT/model.tflearn")
 
     return model
 
 def read_data():
     objects = []
-    with open("data.pickle", "rb") as f:
+    with open("BohdiGPT/data.pickle", "rb") as f:
         words, labels, training, output = pickle.load(f)
         return words, labels, training, output
 
 
 def read_intents():
-    with open('intents.json', encoding="utf8" ) as file:
+    with open('BohdiGPT/intents.json', encoding="utf8" ) as file:
         data = json.load(file)
         return data
 
 
-try:
-    data = read_intents()
-    words, labels, training, output = read_data()
-    print(training)
-    model = get_model(training, output)
-    chat(model, words, data)
-except Exception as e:
-    print(e)
+

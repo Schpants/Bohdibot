@@ -1,1 +1,1 @@
-discord
+discord nltk numpy tflearn tensorflow<2.13 Pillow<10.0.0

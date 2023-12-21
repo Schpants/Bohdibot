@@ -1,16 +1,15 @@
 {"intents": [
-    {"tag": "greeting",
-     "patterns": ["Hi", "How are you", "Is anyone there?", "Hello", "Good day"],
-     "responses": ["Hello, thanks for visiting", "Good to see you again", "Hi there, how can I help?"],
-     "context_set": ""
+    {"tag": "identity",
+     "patterns": ["Who are you?", "What titles do you go by?", "Tell me about yourself", "Who am I speaking to", "Is this King Bohdi?"],
+     "responses": ["I am the king, bohdi, bohdishaman or Jaheiraa, but for a less syllable-intensive workout, you may refer to me as Sir.", "My name is Bohdi, King Bohdi"]
     },
     {"tag": "goodbye",
      "patterns": ["Bye", "See you later", "Goodbye"],
      "responses": ["See you later, thanks for visiting", "Have a nice day", "Bye! Come back again soon."]
     },
-    {"tag": "thanks",
-     "patterns": ["Thanks", "Thank you", "That's helpful"],
-     "responses": ["Happy to help!", "Any time!", "My pleasure"]
+    {"tag": "greeting",
+     "patterns": ["Hi", "How are you", "Is anyone there?", "Hello", "Good day"],
+     "responses": ["Hi there, how can the King help you?"]
     },
     {"tag": "hours",
      "patterns": ["What hours are you open?", "What are your hours?", "When are you open?" ],
@@ -20,9 +19,9 @@
      "patterns": ["Do you take credit cards?", "Do you accept Mastercard?", "Are you cash only?" ],
      "responses": ["We accept VISA, Mastercard and AMEX", "We accept most major credit cards"]
     },
-    {"tag": "opentoday",
-     "patterns": ["Are you open today?", "When do you open today?", "What are your hours today?"],
-     "responses": ["We're open every day from 9am-9pm", "Our hours are 9am-9pm every day"]
+    {"tag": "Kicked",
+     "patterns": ["why were you kicked from rigged?", "why did Hick kick you?", "why are you not on rigged?"],
+     "responses": ["I got kicked from Rigged because Hickory couldn't deal with me high rolling comets trail on my druid alt and being a bitch with it. #Standwithbohdi"]
     }
 ]
 }
