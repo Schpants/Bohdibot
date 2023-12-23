@@ -1,3 +1,4 @@
 key.file
 BohdiGPT/__pycache__/
+bohdiGPT.model/
 *.pyc
