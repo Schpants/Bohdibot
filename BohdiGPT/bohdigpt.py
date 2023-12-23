@@ -8,6 +8,14 @@ import pickle
 import random
 import json
 
+result = model.predict(["Hello how are you?"])
+results_index = numpy.argmax(result)
+
+for tg in data["intents"]:
+    if tg['tag'] == results_index + 1:
+        responses = tg['responses']
+
+print(random.choice(responses))
 
 def bag_of_words(s, words):
     bag = [0 for _ in range(len(words))]

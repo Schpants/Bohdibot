@@ -1,78 +1,51 @@
-import nltk
-nltk.download('punkt')
-from nltk.stem.lancaster import LancasterStemmer
 import numpy
-import tflearn
-import tensorflow
+import tensorflow as tf
 import random
 import json
 import pickle
 
-stemmer = LancasterStemmer()
+
 with open('intents.json', encoding="utf8" ) as file:
     data = json.load(file)
-
-words = []
-labels = []
-docs_x = []
-docs_y = []
+    
+max_len = 10
+sequences = []
+seq_y = []
 
 for intent in data['intents']:
     for pattern in intent['patterns']:
-        wrds = nltk.word_tokenize(pattern)  # string to substrings
-        words.extend(wrds)
-        docs_x.append(wrds)
-        docs_y.append(intent["tag"])
-        
-    if intent['tag'] not in labels:
-        labels.append(intent['tag'])
+        sequences.append(pattern)
+        seq_y.append(intent["tag"])
 
-# word stemming
-words = [stemmer.stem(w.lower()) for w in words if w != "?"]
-words = sorted(list(set(words)))
+num_classes = len(set(seq_y))
+training = numpy.array(sequences)
+y_train = numpy.array(seq_y)
+y_train = y_train -1
+#todo confirm if max_len is needed
+vectorize_layer = tf.keras.layers.TextVectorization(
+    output_mode='int',
+    output_sequence_length= max_len
+)
+vectorize_layer.adapt(training)
 
-labels = sorted(labels)
+model = tf.keras.models.Sequential()
+model.add(tf.keras.Input(shape=(1,), dtype=tf.string))
+model.add(vectorize_layer)
+model.add(tf.keras.layers.Embedding(input_dim=len(vectorize_layer.get_vocabulary()), output_dim=50, input_length=max_len))
+model.add(tf.keras.layers.LSTM(64))
+model.add(tf.keras.layers.Dense(num_classes, activation='softmax'))
 
-training = []
-output = []
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(training, y_train, epochs=10, batch_size=1, validation_split=0.2)
 
+model.save("bohdiGPT.model")
 
-out_empty = [0 for _ in range(len(labels))]
+#converter = tf.lite.TFLiteConverter.from_keras_model(model)
+#converter.optimizations = [tf.lite.Optimize.DEFAULT]
+#converter._experimental_lower_tensor_list_ops = False
+#converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS,
+#tf.lite.OpsSet.SELECT_TF_OPS]
+#tflite_model = converter.convert()
 
-for x, doc in enumerate(docs_x):
-    bag = []
-
-    wrds = [stemmer.stem(w.lower()) for w in doc]
-
-    for w in words:
-        if w in wrds:
-            bag.append(1)
-        else:
-            bag.append(0)
-
-    output_row = out_empty[:]
-    output_row[labels.index(docs_y[x])] = 1
-
-    training.append(bag)
-    output.append(output_row)
-
-
-training = numpy.array(training)
-output = numpy.array(output)
-
-with open("data.pickle", "wb") as f:
-    pickle.dump((words, labels, training, output), f)
-
-tensorflow.compat.v1.reset_default_graph()
-
-net = tflearn.input_data(shape=[None, len(training[0])])
-net = tflearn.fully_connected(net, 8)
-net = tflearn.fully_connected(net, 8)
-net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
-net = tflearn.regression(net)
-
-model = tflearn.DNN(net)
-
-
-model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
-model.save("model.tflearn")
+#with open('bohdiGPT_model.tflite', 'wb') as f:
+#    f.write(tflite_model)
